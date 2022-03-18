@@ -11,6 +11,10 @@
 
 // Bob planner control
 // measure distance with sensor and control motor with PWM signal.
+
+// Rev History
+// rev 0.0 initial
+// rev 1.0 change to speed up motor if button held > 3sec.
 //
 // ---------------------------------------------------------------- /
 
@@ -44,7 +48,7 @@
 #define CNT 0.001936
 #define AS5600 0x36
 
-char str_rev[] = "rev 0.0";
+char str_rev[] = "rev 1.0";
 byte agc,st,rhb,rlb,hb,lb;
 byte conf_l,conf_h;
 
@@ -57,6 +61,7 @@ float height_in,height_mm;
 int sensor_cnt;
 //char d_str[20];
 float planner_set;
+unsigned long sw_time;
 
 bool up_sw,down_sw,cal_sw,go_sw;
 bool dir = false;   //set the motor direction false is lower / true is raise
@@ -178,7 +183,7 @@ void loop()
 
    height_mm = height_in * 25.4;
 
-   if(up_sw  && !mot_en)  //if up sw sensed and motor ot enabled
+   if(up_sw  && !mot_en)  //if up sw sensed and motor not enabled
    { 
      move_up();
      //planner_set = planner_set + 0.01;
@@ -198,6 +203,16 @@ void loop()
      mot_en = LOW;
     // Serial.println("motor disbale");
    }
+
+  // if up or down switch detected for > 2sec speed up the motor signal
+  if(mot_en and ((millis()-sw_time)>3000))
+  { if(up_sw)
+    { analogWrite(MOTOR_PWM,215);
+    }
+    else
+    {analogWrite(MOTOR_PWM,200);
+    }
+  }
 
    // if(go_sw)  move_to_position();
    if(go_sw) update_position();

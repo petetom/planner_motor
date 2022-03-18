@@ -26,6 +26,7 @@ void move_up()
     digitalWrite(MOTOR_DIR,HIGH); //
     analogWrite(MOTOR_PWM,95);
     mot_en = true;
+    sw_time = millis();
     //Serial.println("move up enable");
   
 }
@@ -36,6 +37,7 @@ void move_down()
     digitalWrite(MOTOR_DIR,LOW); //
     analogWrite(MOTOR_PWM,80);
     mot_en = true;
+    sw_time = millis();
    // Serial.println("move down enable");
 }
 
